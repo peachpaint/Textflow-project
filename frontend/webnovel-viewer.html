@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1화 - 회귀의 시작 | 회귀한 천재 마법사</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #ffffff;
+            color: #000000;
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #e0e0e0;
+            padding: 12px 16px;
+            z-index: 100;
+            transition: transform 0.3s ease;
+        }
+
+        .header.hidden {
+            transform: translateY(-100%);
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .icon {
+            width: 24px;
+            height: 24px;
+            color: #000000;
+        }
+
+        .header-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #000000;
+        }
+
+        /* Reader Container */
+        .reader-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 48px 0 80px 0;
+            background: #ffffff;
+        }
+
+        /* Episode Info */
+        .episode-info {
+            padding: 20px 24px;
+            border-bottom: 1px solid #e0e0e0;
+            background: #f9f9f9;
+        }
+
+        .episode-number {
+            font-size: 14px;
+            color: #666666;
+            margin-bottom: 8px;
+        }
+
+        .episode-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #000000;
+            margin-bottom: 12px;
+        }
+
+        .episode-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 13px;
+            color: #666666;
+        }
+
+        .meta-separator {
+            color: #cccccc;
+        }
+
+        /* Novel Content */
+        .novel-content {
+            padding: 32px 24px;
+            font-size: var(--font-size, 16px);
+            line-height: var(--line-height, 1.8);
+            color: #000000;
+            background: var(--bg-color, #ffffff);
+        }
+
+        .novel-paragraph {
+            margin-bottom: 24px;
+            text-indent: 1em;
+        }
+
+        .novel-paragraph.no-indent {
+            text-indent: 0;
+            font-weight: 600;
+            margin-top: 32px;
+        }
+
+        .novel-separator {
+            text-align: center;
+            margin: 40px 0;
+            color: #999999;
+            font-size: 20px;
+            letter-spacing: 8px;
+        }
+
+        /* Author's Note */
+        .authors-note {
+            padding: 24px;
+            background: #f9f9f9;
+            border-top: 2px solid #000000;
+            border-bottom: 1px solid #e0e0e0;
+            margin: 0 24px;
+            border-radius: 8px;
+        }
+
+        .note-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #000000;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .note-content {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #333333;
+        }
+
+        /* Navigation Buttons */
+        .episode-nav {
+            display: flex;
+            gap: 12px;
+            padding: 16px 24px;
+            background: #ffffff;
+        }
+
+        .nav-btn {
+            flex: 1;
+            padding: 14px;
+            background: #000000;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .nav-btn:hover {
+            background: #333333;
+        }
+
+        .nav-btn:disabled {
+            background: #e0e0e0;
+            color: #999999;
+            cursor: not-allowed;
+        }
+
+        .nav-btn.secondary {
+            background: #f0f0f0;
+            color: #000000;
+            border: 1px solid #d0d0d0;
+        }
+
+        .nav-btn.secondary:hover {
+            background: #e0e0e0;
+        }
+
+        /* Comments Section */
+        .comments-section {
+            padding: 24px;
+            background: #ffffff;
+        }
+
+        .comments-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .comments-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #000000;
+        }
+
+        .comments-count {
+            font-size: 14px;
+            color: #666666;
+        }
+
+        .comment-input-wrapper {
+            margin-bottom: 24px;
+        }
+
+        .comment-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d0d0d0;
+            border-radius: 8px;
+            font-size: 14px;
+            resize: vertical;
+            min-height: 80px;
+            font-family: inherit;
+        }
+
+        .comment-input:focus {
+            outline: none;
+            border-color: #000000;
+        }
+
+        .comment-submit-btn {
+            margin-top: 8px;
+            padding: 10px 20px;
+            background: #000000;
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            float: right;
+        }
+
+        .comment-submit-btn:hover {
+            background: #333333;
+        }
+
+        .comment-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .comment-item {
+            padding: 16px;
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .comment-author {
+            font-size: 14px;
+            font-weight: 600;
+            color: #000000;
+        }
+
+        .comment-date {
+            font-size: 12px;
+            color: #999999;
+        }
+
+        .comment-text {
+            font-size: 14px;
+            line-height: 1.5;
+            color: #333333;
+            margin-bottom: 8px;
+        }
+
+        .comment-actions {
+            display: flex;
+            gap: 16px;
+            font-size: 13px;
+        }
+
+        .comment-action {
+            background: none;
+            border: none;
+            color: #666666;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 0;
+        }
+
+        .comment-action:hover {
+            color: #000000;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #ffffff;
+            border-top: 1px solid #e0e0e0;
+            padding: 12px 16px;
+            z-index: 100;
+            transition: transform 0.3s ease;
+        }
+
+        .bottom-nav.hidden {
+            transform: translateY(100%);
+        }
+
+        .bottom-nav-content {
+            display: flex;
+            gap: 12px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .bottom-nav-btn {
+            flex: 1;
+            padding: 12px;
+            background: #000000;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .bottom-nav-btn:hover {
+            background: #333333;
+        }
+
+        .bottom-nav-btn:disabled {
+            background: #e0e0e0;
+            color: #999999;
+        }
+
+        .bottom-nav-btn.list {
+            background: #f0f0f0;
+            color: #000000;
+            border: 1px solid #d0d0d0;
+        }
+
+        .bottom-nav-btn.list:hover {
+            background: #e0e0e0;
+        }
+
+        /* Settings Panel */
+        .settings-panel {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #ffffff;
+            border-top: 1px solid #e0e0e0;
+            padding: 20px 16px;
+            z-index: 101;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+            box-shadow: 0 -4px 12px rgba(0,0,0,0.1);
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .settings-panel.active {
+            transform: translateY(0);
+        }
+
+        .settings-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .settings-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #000000;
+        }
+
+        .settings-option {
+            margin-bottom: 20px;
+        }
+
+        .settings-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #000000;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .settings-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .settings-btn {
+            flex: 1;
+            padding: 8px;
+            background: #f0f0f0;
+            border: 1px solid #d0d0d0;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .settings-btn.active {
+            background: #000000;
+            color: #ffffff;
+            border-color: #000000;
+        }
+
+        .settings-slider-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .settings-slider {
+            flex: 1;
+            -webkit-appearance: none;
+            height: 6px;
+            border-radius: 3px;
+            background: #e0e0e0;
+            outline: none;
+        }
+
+        .settings-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #000000;
+            cursor: pointer;
+        }
+
+        .settings-slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #000000;
+            cursor: pointer;
+            border: none;
+        }
+
+        .settings-value {
+            min-width: 40px;
+            text-align: center;
+            font-size: 14px;
+            color: #000000;
+        }
+
+        /* Reading Progress */
+        .reading-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: #000000;
+            width: 0%;
+            z-index: 101;
+            transition: width 0.1s;
+        }
+
+        /* Page Number */
+        .page-indicator {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            color: #ffffff;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            z-index: 99;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .page-indicator.visible {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <!-- Reading Progress Bar -->
+    <div class="reading-progress" id="progressBar"></div>
+
+    <!-- Page Indicator -->
+    <div class="page-indicator" id="pageIndicator">0%</div>
+
+    <!-- Header -->
+    <header class="header" id="header">
+        <div class="header-content">
+            <div class="header-left">
+                <button class="icon-btn" onclick="history.back()">
+                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 18l-6-6 6-6"></path>
+                    </svg>
+                </button>
+                <span class="header-title">1화 - 회귀의 시작</span>
+            </div>
+            <div class="header-right">
+                <button class="icon-btn" onclick="toggleSettings()">
+                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M12 1v6m0 6v6m6-6h6M1 12h6"></path>
+                    </svg>
+                </button>
+                <button class="icon-btn">
+                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="1"></circle>
+                        <circle cx="19" cy="12" r="1"></circle>
+                        <circle cx="5" cy="12" r="1"></circle>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Reader Container -->
+    <div class="reader-container">
+        <!-- Episode Info -->
+        <div class="episode-info">
+            <div class="episode-number">1화</div>
+            <h1 class="episode-title">회귀의 시작</h1>
+            <div class="episode-meta">
+                <span>2024.04.10</span>
+                <span class="meta-separator">·</span>
+                <span>조회 185K</span>
+                <span class="meta-separator">·</span>
+                <span>좋아요 3.2K</span>
+            </div>
+        </div>
+
+        <!-- Novel Content -->
+        <div class="novel-content" id="novelContent">
+            <p class="novel-paragraph no-indent">프롤로그</p>
+            
+            <p class="novel-paragraph">
+                "끝이다... 모든 것이 끝났어."
+            </p>
+            
+            <p class="novel-paragraph">
+                피로 물든 전장 한가운데, 한 남자가 무릎을 꿇고 있었다. 세계 최강의 마법사로 불렸던 아르카나 그레이엄. 그의 눈앞에는 그가 가장 신뢰했던 동료들이 냉소를 머금은 채 서 있었다.
+            </p>
+            
+            <p class="novel-paragraph">
+                "왜... 왜 이러는 거지?"
+            </p>
+            
+            <p class="novel-paragraph">
+                아르카나의 떨리는 목소리에, 한때 가장 친한 친구였던 남자가 차갑게 대답했다.
+            </p>
+            
+            <p class="novel-paragraph">
+                "자네가 너무 강했어, 아르카나. 자네 하나 때문에 우리 모두가 그림자 속에 갇혀 살아야 했지. 이제야 우리가 빛을 볼 차례야."
+            </p>
+            
+            <p class="novel-paragraph">
+                배신이었다. 10년을 함께 싸워온 동료들의 배신. 아르카나는 믿을 수 없다는 듯 그들을 바라보았다. 하지만 그들의 눈빛은 이미 결정되어 있었다.
+            </p>
+            
+            <div class="novel-separator">* * *</div>
+            
+            <p class="novel-paragraph no-indent">Chapter 1 - 두 번째 기회</p>
+            
+            <p class="novel-paragraph">
+                "으윽..."
+            </p>
+            
+            <p class="novel-paragraph">
+                아르카나는 비명을 지르며 몸을 일으켰다. 온몸이 땀으로 흠뻑 젖어 있었다. 숨을 헐떡이며 주변을 둘러본 그는 자신이 어디에 있는지 깨닫고 경악했다.
+            </p>
+            
+            <p class="novel-paragraph">
+                "여기는... 마법 아카데미?"
+            </p>
+            
+            <p class="novel-paragraph">
+                익숙한 기숙사 방. 20년 전 그가 15살 소년이었을 때 사용하던 바로 그 방이었다. 황급히 손을 들어올려 확인해본 아르카나는 그것이 젊고 매끈한 소년의 손임을 확인했다.
+            </p>
+            
+            <p class="novel-paragraph">
+                "회귀했다... 내가 과거로 돌아왔어!"
+            </p>
+            
+            <p class="novel-paragraph">
+                그의 마지막 기억은 배신자들에게 둘러싸여 죽음을 맞이하던 순간이었다. 그런데 눈을 떠보니 20년 전, 모든 것이 시작되기 전으로 돌아와 있었다.
+            </p>
+            
+            <p class="novel-paragraph">
+                아르카나는 책상 위에 놓인 달력을 확인했다. 아카데미 입학식을 마친 지 일주일째 되는 날. 이날부터 그는 마법을 본격적으로 배우기 시작했고, 훗날 그를 배신할 동료들을 만나게 된다.
+            </p>
+            
+            <p class="novel-paragraph">
+                "이번엔 다르다."
+            </p>
+            
+            <p class="novel-paragraph">
+                아르카나의 눈에 결연한 빛이 서렸다. 그에게는 20년간의 경험과 지식이 있었다. 세계 최강의 마법사였던 기억이 그대로 남아 있었다.
+            </p>
+            
+            <p class="novel-paragraph">
+                "같은 실수는 반복하지 않아. 이번 생에서는 절대로..."
+            </p>
+            
+            <div class="novel-separator">* * *</div>
+            
+            <p class="novel-paragraph">
+                다음날 아침, 아르카나는 마법 기초 수업에 참석했다. 교실에는 이미 많은 학생들이 모여 있었다. 그들의 얼굴을 하나하나 확인하던 아르카나는 교실 뒤편에 앉아 있는 한 소년을 발견했다.
+            </p>
+            
+            <p class="novel-paragraph">
+                '레온 발디아...'
+            </p>
+            
+            <p class="novel-paragraph">
+                훗날 그를 배신할 리더. 아직은 순수한 눈빛을 가진 15살 소년에 불과했다. 아르카나는 주먹을 꽉 쥐었다. 분노가 치밀어 올랐지만, 그는 감정을 억눌렀다.
+            </p>
+            
+            <p class="novel-paragraph">
+                '아직은 아니야. 지금 당장 복수할 수는 없어. 먼저 힘을 키워야 해.'
+            </p>
+            
+            <p class="novel-paragraph">
+                교수가 들어오며 수업이 시작되었다. 기초 마법 이론. 아르카나에게는 너무나 익숙한 내용이었다. 하지만 그는 다른 학생들처럼 열심히 필기하는 척 했다. 아직은 자신의 능력을 드러낼 때가 아니었다.
+            </p>
+            
+            <p class="novel-paragraph">
+                수업이 끝나고, 학생들이 실습을 위해 마법진 앞에 섰다. 기초 화염 마법을 시연하는 시간이었다.
+            </p>
+            
+            <p class="novel-paragraph">
+                "자, 여러분. 주문을 외우며 마나를 집중시켜보세요. 작은 불꽃이라도 만들면 합격입니다."
+            </p>
+            
+            <p class="novel-paragraph">
+                학생들이 하나씩 앞으로 나가 시도했지만, 대부분 실패했다. 겨우 몇 명만이 손가락 끝에서 작은 불꽃을 피워냈다.
+            </p>
+            
+            <p class="novel-paragraph">
+                "다음, 아르카나 그레이엄."
+            </p>
+            
+            <p class="novel-paragraph">
+                교수가 그의 이름을 불렀다. 아르카나는 천천히 앞으로 걸어 나갔다. 그의 머릿속에는 수천 가지의 마법 공식이 떠올랐다. 세계를 불태울 수 있는 화염마법부터 별을 떨어뜨리는 파멸의 주문까지.
+            </p>
+            
+            <p class="novel-paragraph">
+                하지만 그는 그 모든 것을 억눌렀다. 대신 가장 기초적인 화염마법을 사용했다. 손끝에서 작은 불꽃이 피어올랐다.
+            </p>
+            
+            <p class="novel-paragraph">
+                "좋아요, 합격입니다."
+            </p>
+            
+            <p class="novel-paragraph">
+                교수가 만족스럽게 고개를 끄덕였다. 아르카나는 자리로 돌아가며 미소를 지었다. 이것이 시작이었다. 두 번째 인생의 시작.
+            </p>
+            
+            <div class="novel-separator">* * *</div>
+            
+            <p class="novel-paragraph">
+                그날 밤, 아르카나는 기숙사 옥상에 올라가 별을 바라보았다. 차가운 밤바람이 그의 얼굴을 스쳤다.
+            </p>
+            
+            <p class="novel-paragraph">
+                "20년... 다시 20년의 시간을 받았어."
+            </p>
+            
+            <p class="novel-paragraph">
+                그는 손을 들어 올렸다. 그의 손에서 푸른 마나가 흘러나왔다. 전생의 기억 덕분에 마나 컨트롤은 여전히 완벽했다.
+            </p>
+            
+            <p class="novel-paragraph">
+                "이번엔 달라질 거야. 배신당하지도 않을 것이고, 무엇보다..."
+            </p>
+            
+            <p class="novel-paragraph">
+                아르카나의 눈빛이 날카롭게 빛났다.
+            </p>
+            
+            <p class="novel-paragraph">
+                "더 강해질 거야. 누구도 나를 배신할 생각조차 할 수 없을 만큼."
+            </p>
+            
+            <p class="novel-paragraph">
+                그렇게 천재 마법사의 두 번째 인생이 시작되었다.
+            </p>
+            
+            <div class="novel-separator">* * *</div>
+            
+            <p class="novel-paragraph" style="text-align: center; margin-top: 40px;">
+                <strong>1화 끝</strong>
+            </p>
+        </div>
+
+        <!-- Author's Note -->
+        <div class="authors-note">
+            <div class="note-title">
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                </svg>
+                작가의 말
+            </div>
+            <p class="note-content">
+                안녕하세요, 작가 김작가입니다. 오랜 준비 끝에 드디어 첫 화를 공개하게 되었습니다. 
+                '회귀한 천재 마법사'는 제가 오랫동안 구상해온 이야기로, 회귀물의 클래식한 재미와 함께 새로운 요소들을 더했습니다. 
+                주인공 아르카나가 과거로 돌아가 어떻게 성장하고 복수할지, 그리고 그 과정에서 만나게 될 새로운 인연들을 기대해주세요. 
+                매주 수요일 연재되며, 여러분의 많은 응원과 관심 부탁드립니다!
+            </p>
+        </div>
+
+        <!-- Episode Navigation -->
+        <div class="episode-nav">
+            <button class="nav-btn" disabled>◀ 이전 화</button>
+            <button class="nav-btn secondary" onclick="location.href='detail.html'">목록</button>
+            <button class="nav-btn">다음 화 ▶</button>
+        </div>
+
+        <!-- Comments Section -->
+        <div class="comments-section">
+            <div class="comments-header">
+                <h2 class="comments-title">댓글</h2>
+                <span class="comments-count">156개</span>
+            </div>
+
+            <div class="comment-input-wrapper">
+                <textarea class="comment-input" placeholder="댓글을 입력하세요..."></textarea>
+                <button class="comment-submit-btn">등록</button>
+                <div style="clear: both;"></div>
+            </div>
+
+            <div class="comment-list">
+                <div class="comment-item">
+                    <div class="comment-header">
+                        <span class="comment-author">소설러버</span>
+                        <span class="comment-date">10분 전</span>
+                    </div>
+                    <p class="comment-text">
+                        회귀물 특유의 통쾌함이 느껴지네요! 전개가 빠르면서도 캐릭터 묘사가 잘 되어있어요. 다음 화 빨리 보고 싶습니다 ㅎㅎ
+                    </p>
+                    <div class="comment-actions">
+                        <button class="comment-action">
+                            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"></path>
+                            </svg>
+                            <span>58</span>
+                        </button>
+                        <button class="comment-action">
+                            답글
+                        </button>
+                    </div>
+                </div>
+
+                <div class="comment-item">
+                    <div class="comment-header">
+                        <span class="comment-author">판타지광</span>
+                        <span class="comment-date">30분 전</span>
+                    </div>
+                    <p class="comment-text">
+                        설정이 탄탄하고 몰입감 있어요. 배신자들에 대한 복수가 어떻게 펼쳐질지 정말 궁금합니다. 작가님 필력도 좋으세요!
+                    </p>
+                    <div class="comment-actions">
+                        <button class="comment-action">
+                            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"></path>
+                            </svg>
+                            <span>42</span>
+                        </button>
+                        <button class="comment-action">
+                            답글
+                        </button>
+                    </div>
+                </div>
+
+                <div class="comment-item">
+                    <div class="comment-header">
+                        <span class="comment-author">매직마스터</span>
+                        <span class="comment-date">1시간 전</span>
+                    </div>
+                    <p class="comment-text">
+                        오 이거 대박 예감! 프롤로그부터 빨려들어가네요. 주인공이 어떻게 성장할지, 배신자들을 어떻게 대할지 너무 기대됩니다!
+                    </p>
+                    <div class="comment-actions">
+                        <button class="comment-action">
+                            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"></path>
+                            </svg>
+                            <span>51</span>
+                        </button>
+                        <button class="comment-action">
+                            답글
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav" id="bottomNav">
+        <div class="bottom-nav-content">
+            <button class="bottom-nav-btn" disabled>
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                </svg>
+                이전
+            </button>
+            <button class="bottom-nav-btn list" onclick="location.href='detail.html'">
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+                목록
+            </button>
+            <button class="bottom-nav-btn">
+                다음
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Settings Panel -->
+    <div class="settings-panel" id="settingsPanel">
+        <div class="settings-header">
+            <h3 class="settings-title">뷰어 설정</h3>
+            <button class="icon-btn" onclick="toggleSettings()">
+                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+
+        <div class="settings-option">
+            <label class="settings-label">글자 크기</label>
+            <div class="settings-slider-wrapper">
+                <span class="settings-value">작게</span>
+                <input type="range" class="settings-slider" id="fontSizeSlider" min="14" max="22" value="16" step="1">
+                <span class="settings-value">크게</span>
+            </div>
+        </div>
+
+        <div class="settings-option">
+            <label class="settings-label">줄 간격</label>
+            <div class="settings-slider-wrapper">
+                <span class="settings-value">좁게</span>
+                <input type="range" class="settings-slider" id="lineHeightSlider" min="1.4" max="2.2" value="1.8" step="0.1">
+                <span class="settings-value">넓게</span>
+            </div>
+        </div>
+
+        <div class="settings-option">
+            <label class="settings-label">배경색</label>
+            <div class="settings-buttons">
+                <button class="settings-btn active" data-bg="#ffffff" data-color="#000000">흰색</button>
+                <button class="settings-btn" data-bg="#f5f1e8" data-color="#000000">베이지</button>
+                <button class="settings-btn" data-bg="#2d2d2d" data-color="#e0e0e0">다크</button>
+            </div>
+        </div>
+
+        <div class="settings-option">
+            <label class="settings-label">페이지 넘김</label>
+            <div class="settings-buttons">
+                <button class="settings-btn active">스크롤</button>
+                <button class="settings-btn">페이지</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const header = document.getElementById('header');
+        const bottomNav = document.getElementById('bottomNav');
+        const settingsPanel = document.getElementById('settingsPanel');
+        const progressBar = document.getElementById('progressBar');
+        const pageIndicator = document.getElementById('pageIndicator');
+        const novelContent = document.getElementById('novelContent');
+        
+        let lastScrollTop = 0;
+        let scrollTimeout;
+
+        // Auto-hide header and bottom nav on scroll
+        window.addEventListener('scroll', function() {
+            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            
+            // Update progress bar
+            const windowHeight = window.innerHeight;
+            const documentHeight = document.documentElement.scrollHeight;
+            const scrollPercent = (scrollTop / (documentHeight - windowHeight)) * 100;
+            progressBar.style.width = scrollPercent + '%';
+            
+            // Show page indicator
+            pageIndicator.textContent = Math.round(scrollPercent) + '%';
+            pageIndicator.classList.add('visible');
+            
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+                pageIndicator.classList.remove('visible');
+            }, 1000);
+            
+            // Hide/show navigation
+            if (scrollTop > lastScrollTop && scrollTop > 100) {
+                header.classList.add('hidden');
+                bottomNav.classList.add('hidden');
+            } else {
+                header.classList.remove('hidden');
+                bottomNav.classList.remove('hidden');
+            }
+            
+            lastScrollTop = scrollTop;
+        });
+
+        // Toggle settings panel
+        function toggleSettings() {
+            settingsPanel.classList.toggle('active');
+        }
+
+        // Font size slider
+        const fontSizeSlider = document.getElementById('fontSizeSlider');
+        fontSizeSlider.addEventListener('input', function() {
+            novelContent.style.setProperty('--font-size', this.value + 'px');
+        });
+
+        // Line height slider
+        const lineHeightSlider = document.getElementById('lineHeightSlider');
+        lineHeightSlider.addEventListener('input', function() {
+            novelContent.style.setProperty('--line-height', this.value);
+        });
+
+        // Background color buttons
+        document.querySelectorAll('[data-bg]').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const bg = this.dataset.bg;
+                const color = this.dataset.color;
+                novelContent.style.setProperty('--bg-color', bg);
+                novelContent.style.color = color;
+                
+                // Update active state
+                this.parentElement.querySelectorAll('.settings-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Settings buttons
+        document.querySelectorAll('.settings-btn:not([data-bg])').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (this.parentElement.querySelector('.settings-btn.active') !== this) {
+                    const parent = this.parentElement;
+                    parent.querySelectorAll('.settings-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                }
+            });
+        });
+
+        // Click outside to close settings
+        document.addEventListener('click', function(event) {
+            if (!settingsPanel.contains(event.target) && 
+                !event.target.closest('.icon-btn')) {
+                settingsPanel.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>

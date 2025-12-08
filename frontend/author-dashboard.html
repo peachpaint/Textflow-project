@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>작가 대시보드 - WEBTOON PLUS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f5f5f5;
+            color: #000000;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        h2 {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        h3 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        h4 {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        p {
+            font-size: 14px;
+        }
+
+        /* Header */
+        .header {
+            background: #ffffff;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 16px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: 700;
+            color: #026873;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 8px;
+        }
+
+        .nav-tab {
+            padding: 8px 16px;
+            background: none;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #666666;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .nav-tab:hover {
+            background: #f0f0f0;
+            color: #000000;
+        }
+
+        .nav-tab.active {
+            background: #026873;
+            color: #ffffff;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .notification-btn {
+            position: relative;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            background: #05F2DB;
+            color: #026873;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 10px;
+            min-width: 18px;
+            text-align: center;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #026873, #1FAFBF);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #000000;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px 20px;
+        }
+
+        /* Welcome Section */
+        .welcome-section {
+            background: linear-gradient(135deg, #026873, #1FAFBF);
+            padding: 32px;
+            border-radius: 16px;
+            margin-bottom: 24px;
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(2,104,115,0.2);
+        }
+
+        .welcome-title {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .welcome-subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+            margin-bottom: 24px;
+        }
+
+        .quick-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .quick-btn {
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .quick-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .quick-btn.primary {
+            background: #05F2DB;
+            color: #026873;
+            border-color: #05F2DB;
+        }
+
+        .quick-btn.primary:hover {
+            background: #6CCED9;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: #ffffff;
+            padding: 24px;
+            border-radius: 12px;
+            border: 1px solid #e0e0e0;
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transform: translateY(-2px);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #666666;
+            font-weight: 500;
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stat-icon.blue {
+            background: rgba(2,104,115,0.1);
+            color: #026873;
+        }
+
+        .stat-icon.cyan {
+            background: rgba(31,175,191,0.1);
+            color: #1FAFBF;
+        }
+
+        .stat-icon.green {
+            background: rgba(5,242,219,0.1);
+            color: #026873;
+        }
+
+        .stat-icon.teal {
+            background: rgba(98,217,205,0.1);
+            color: #026873;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #000000;
+            margin-bottom: 4px;
+        }
+
+        .stat-change {
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .stat-change.up {
+            color: #05F2DB;
+        }
+
+        .stat-change.down {
+            color: #ff6b6b;
+        }
+
+        /* Section */
+        .section {
+            background: #ffffff;
+            padding: 24px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border: none;
+        }
+
+        .btn-primary {
+            background: #026873;
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background: #1FAFBF;
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #000000;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #d0d0d0;
+            color: #666666;
+        }
+
+        .btn-outline:hover {
+            border-color: #026873;
+            color: #026873;
+        }
+
+        /* Works List */
+        .works-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .work-item {
+            display: flex;
+            gap: 16px;
+            padding: 16px;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .work-item:hover {
+            border-color: #1FAFBF;
+            background: #f9f9f9;
+        }
+
+        .work-thumbnail {
+            width: 80px;
+            height: 110px;
+            border-radius: 8px;
+            overflow: hidden;
+            flex-shrink: 0;
+            background: #f0f0f0;
+        }
+
+        .work-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .work-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .work-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+        }
+
+        .work-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #000000;
+            margin-bottom: 4px;
+        }
+
+        .work-genre {
+            font-size: 13px;
+            color: #666666;
+            margin-bottom: 12px;
+        }
+
+        .work-stats {
+            display: flex;
+            gap: 16px;
+            font-size: 13px;
+            color: #666666;
+        }
+
+        .work-stat {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .status-badge.pending {
+            background: rgba(255,193,7,0.1);
+            color: #f59e0b;
+        }
+
+        .status-badge.approved {
+            background: rgba(5,242,219,0.1);
+            color: #026873;
+        }
+
+        .status-badge.rejected {
+            background: rgba(239,68,68,0.1);
+            color: #dc2626;
+        }
+
+        .work-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .icon-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            border: 1px solid #e0e0e0;
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .icon-btn:hover {
+            background: #f0f0f0;
+            border-color: #026873;
+        }
+
+        .icon {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Notifications */
+        .notifications-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .notification-item {
+            padding: 16px;
+            border-left: 4px solid #e0e0e0;
+            background: #f9f9f9;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .notification-item:hover {
+            background: #f0f0f0;
+        }
+
+        .notification-item.info {
+            border-left-color: #1FAFBF;
+            background: rgba(31,175,191,0.05);
+        }
+
+        .notification-item.success {
+            border-left-color: #05F2DB;
+            background: rgba(5,242,219,0.05);
+        }
+
+        .notification-item.warning {
+            border-left-color: #f59e0b;
+            background: rgba(245,158,11,0.05);
+        }
+
+        .notification-item.error {
+            border-left-color: #dc2626;
+            background: rgba(220,38,38,0.05);
+        }
+
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 8px;
+        }
+
+        .notification-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #000000;
+        }
+
+        .notification-time {
+            font-size: 12px;
+            color: #999999;
+        }
+
+        .notification-message {
+            font-size: 14px;
+            color: #666666;
+            line-height: 1.5;
+        }
+
+        /* Revenue Chart */
+        .revenue-chart {
+            height: 300px;
+            display: flex;
+            align-items: flex-end;
+            gap: 12px;
+            padding: 20px 0;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .chart-bar {
+            flex: 1;
+            background: linear-gradient(to top, #026873, #1FAFBF);
+            border-radius: 8px 8px 0 0;
+            position: relative;
+            min-height: 40px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .chart-bar:hover {
+            background: linear-gradient(to top, #1FAFBF, #05F2DB);
+        }
+
+        .chart-bar-value {
+            position: absolute;
+            top: -24px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            font-weight: 600;
+            color: #000000;
+            white-space: nowrap;
+        }
+
+        .chart-bar-label {
+            text-align: center;
+            margin-top: 8px;
+            font-size: 12px;
+            color: #666666;
+        }
+
+        .revenue-summary {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .revenue-item {
+            padding: 16px;
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+
+        .revenue-label {
+            font-size: 13px;
+            color: #666666;
+            margin-bottom: 8px;
+        }
+
+        .revenue-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #000000;
+        }
+
+        .revenue-unit {
+            font-size: 14px;
+            color: #666666;
+            margin-left: 4px;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 16px;
+            opacity: 0.3;
+        }
+
+        .empty-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #000000;
+            margin-bottom: 8px;
+        }
+
+        .empty-message {
+            font-size: 14px;
+            color: #666666;
+            margin-bottom: 24px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .nav-tabs {
+                width: 100%;
+                overflow-x: auto;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .revenue-chart {
+                height: 200px;
+            }
+
+            .revenue-summary {
+                grid-template-columns: 1fr;
+            }
+
+            .work-item {
+                flex-direction: column;
+            }
+
+            .work-header {
+                flex-direction: column;
+                gap: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="header-left">
+                <div class="logo">WEBTOON PLUS</div>
+                <div class="nav-tabs">
+                    <button class="nav-tab active">대시보드</button>
+                    <button class="nav-tab">내 작품</button>
+                    <button class="nav-tab">정산</button>
+                    <button class="nav-tab">통계</button>
+                </div>
+            </div>
+            <div class="header-right">
+                <button class="notification-btn">
+                    <svg class="icon" style="width: 24px; height: 24px;" fill="none" stroke="#000000" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                    </svg>
+                    <span class="notification-badge">3</span>
+                </button>
+                <div class="user-info">
+                    <div class="user-avatar">김</div>
+                    <span class="user-name">김작가</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Welcome Section -->
+        <div class="welcome-section">
+            <h1 class="welcome-title">안녕하세요, 김작가님! 👋</h1>
+            <p class="welcome-subtitle">오늘도 멋진 작품 활동 하세요</p>
+            <div class="quick-actions">
+                <button class="quick-btn primary">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    새 작품 등록
+                </button>
+                <button class="quick-btn">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                    </svg>
+                    회차 업로드
+                </button>
+                <button class="quick-btn">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                    통계 보기
+                </button>
+            </div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-label">총 조회수</div>
+                    </div>
+                    <div class="stat-icon blue">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                        </svg>
+                    </div>
+                </div>
+                <div class="stat-value">1,234,567</div>
+                <div class="stat-change up">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+                    </svg>
+                    <span>12.5% 증가</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-label">이번 달 수익</div>
+                    </div>
+                    <div class="stat-icon cyan">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+                <div class="stat-value">₩2,450,000</div>
+                <div class="stat-change up">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+                    </svg>
+                    <span>8.3% 증가</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-label">구독자 수</div>
+                    </div>
+                    <div class="stat-icon green">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+                <div class="stat-value">15,234</div>
+                <div class="stat-change up">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+                    </svg>
+                    <span>245명 증가</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-label">평균 평점</div>
+                    </div>
+                    <div class="stat-icon teal">
+                        <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                        </svg>
+                    </div>
+                </div>
+                <div class="stat-value">9.8</div>
+                <div class="stat-change up">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+                    </svg>
+                    <span>0.2 증가</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notifications Section -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-title">
+                    <svg width="24" height="24" fill="none" stroke="#026873" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                    </svg>
+                    <h2>최근 알림</h2>
+                </div>
+                <button class="btn btn-outline">전체 보기</button>
+            </div>
+
+            <div class="notifications-list">
+                <div class="notification-item success">
+                    <div class="notification-header">
+                        <div class="notification-title">✅ 작품 승인 완료</div>
+                        <div class="notification-time">10분 전</div>
+                    </div>
+                    <p class="notification-message">
+                        '회귀한 천재 마법사' 작품이 승인되었습니다. 이제 독자들에게 공개됩니다!
+                    </p>
+                </div>
+
+                <div class="notification-item info">
+                    <div class="notification-header">
+                        <div class="notification-title">📊 주간 리포트 도착</div>
+                        <div class="notification-time">2시간 전</div>
+                    </div>
+                    <p class="notification-message">
+                        지난주 조회수가 전주 대비 35% 증가했습니다. 독자 반응이 좋습니다!
+                    </p>
+                </div>
+
+                <div class="notification-item warning">
+                    <div class="notification-header">
+                        <div class="notification-title">⏳ 검토 중</div>
+                        <div class="notification-time">1일 전</div>
+                    </div>
+                    <p class="notification-message">
+                        '마법의 세계' 작품이 현재 검토 중입니다. 승인까지 1-2일 소요될 수 있습니다.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Works Section -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-title">
+                    <svg width="24" height="24" fill="none" stroke="#026873" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                    </svg>
+                    <h2>내 작품 목록</h2>
+                </div>
+                <div class="section-actions">
+                    <button class="btn btn-secondary">
+                        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
+                        </svg>
+                        필터
+                    </button>
+                    <button class="btn btn-primary">
+                        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        새 작품
+                    </button>
+                </div>
+            </div>
+
+            <div class="works-list">
+                <!-- Work Item 1 - Approved -->
+                <div class="work-item">
+                    <div class="work-thumbnail">
+                        <img src="https://images.unsplash.com/photo-1670073952001-1aafed4bfc02?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmYW50YXN5JTIwYXJ0JTIwZGlnaXRhbHxlbnwxfHx8fDE3NjQ4MTk4NDJ8MA&ixlib=rb-4.1.0&q=80&w=1080" alt="회귀한 천재 마법사">
+                    </div>
+                    <div class="work-info">
+                        <div>
+                            <div class="work-header">
+                                <div>
+                                    <h3 class="work-title">회귀한 천재 마법사</h3>
+                                    <p class="work-genre">판타지 · 웹소설</p>
+                                </div>
+                                <span class="status-badge approved">승인됨</span>
+                            </div>
+                            <div class="work-stats">
+                                <div class="work-stat">
+                                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                    </svg>
+                                    <span>1.2M</span>
+                                </div>
+                                <div class="work-stat">
+                                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                                    </svg>
+                                    <span>3.2K</span>
+                                </div>
+                                <div class="work-stat">
+                                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                                    </svg>
+                                    <span>9.8</span>
+                                </div>
+                                <div class="work-stat">
+                                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                    </svg>
+                                    <span>78화</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="work-actions">
+                            <button class="icon-btn" title="통계 보기">
+                                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                                </svg>
+                            </button>
+                            <button class="icon-btn" title="수정하기">
+                                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                </svg>
+                            </button>
+                            <button class="icon-btn" title="회차 관리">
+                                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                </svg>
+                            </button>
+                            <button class="icon-btn" title="더보기">
+                                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <circle cx="12" cy="12" r="1"></circle>
+                                    <circle cx="19" cy="12" r="1"></circle>
+                                    <circle cx="5" cy="12" r="1"></circle>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Work Item 2 - Pending -->
+                <div class="work-item">
+                    <div class="work-thumbnail">
+                        <img src="https://images.unsplash.com/photo-1761285367125-61a6470266ad?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxyb21hbnRpYyUyMGlsbHVzdHJhdGlvbiUyMGFydHxlbnwxfHx8fDE3NjQ4MTk4NDJ8MA&ixlib=rb-4.1.0&q=80&w=1080" alt="마법의 세계">
+                    </div>
+                    <div class="work-info">
+                        <div>
+                            <div class="work-header">
+                                <div>
+                                    <h3 class="work-title">마법의 세계</h3>
+                                    <p class="work-genre">판타지 · 웹툰</p>
+                                </div>
+                                <span class="status-badge pending">승인 대기</span>
+                            </div>
+                            <div class="work-stats">
+                                <div class="work-stat">
+                                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    <span>검토 중 (1~2일 소요)</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="work-actions">
+                            <button class="icon-btn" title="수정하기">
+                                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                </svg>
+                            </button>
+                            <button class="icon-btn" title="삭제하기">
+                                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Work Item 3 - Rejected -->
+                <div class="work-item">
+                    <div class="work-thumbnail">
+                        <img src="https://images.unsplash.com/photo-1720031995215-3b13aa6c42a7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhY3Rpb24lMjBoZXJvJTIwaWxsdXN0cmF0aW9ufGVufDF8fHx8MTc2NDgxOTg0M3ww&ixlib=rb-4.1.0&q=80&w=1080" alt="전설의 검사">
+                    </div>
+                    <div class="work-info">
+                        <div>
+                            <div class="work-header">
+                                <div>
+                                    <h3 class="work-title">전설의 검사</h3>
+                                    <p class="work-genre">액션 · 웹툰</p>
+                                </div>
+                                <span class="status-badge rejected">반려됨</span>
+                            </div>
+                            <div class="work-stats">
+                                <div class="work-stat">
+                                    <svg width="16" height="16" fill="none" stroke="#dc2626" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                                    </svg>
+                                    <span style="color: #dc2626;">반려 사유: 저작권 관련 문제가 의심됩니다. 수정 후 재신청 바랍니다.</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="work-actions">
+                            <button class="icon-btn" title="수정하기">
+                                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                </svg>
+                            </button>
+                            <button class="icon-btn" title="재신청">
+                                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                </svg>
+                            </button>
+                            <button class="icon-btn" title="삭제하기">
+                                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Revenue Section -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-title">
+                    <svg width="24" height="24" fill="none" stroke="#026873" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <h2>최근 6개월 수익</h2>
+                </div>
+                <div class="section-actions">
+                    <button class="btn btn-outline">상세 보기</button>
+                    <button class="btn btn-secondary">정산 신청</button>
+                </div>
+            </div>
+
+            <div class="revenue-chart">
+                <div style="flex: 1;">
+                    <div class="chart-bar" style="height: 40%;">
+                        <div class="chart-bar-value">₩1.2M</div>
+                    </div>
+                    <div class="chart-bar-label">7월</div>
+                </div>
+                <div style="flex: 1;">
+                    <div class="chart-bar" style="height: 55%;">
+                        <div class="chart-bar-value">₩1.5M</div>
+                    </div>
+                    <div class="chart-bar-label">8월</div>
+                </div>
+                <div style="flex: 1;">
+                    <div class="chart-bar" style="height: 65%;">
+                        <div class="chart-bar-value">₩1.8M</div>
+                    </div>
+                    <div class="chart-bar-label">9월</div>
+                </div>
+                <div style="flex: 1;">
+                    <div class="chart-bar" style="height: 75%;">
+                        <div class="chart-bar-value">₩2.1M</div>
+                    </div>
+                    <div class="chart-bar-label">10월</div>
+                </div>
+                <div style="flex: 1;">
+                    <div class="chart-bar" style="height: 70%;">
+                        <div class="chart-bar-value">₩2.0M</div>
+                    </div>
+                    <div class="chart-bar-label">11월</div>
+                </div>
+                <div style="flex: 1;">
+                    <div class="chart-bar" style="height: 88%;">
+                        <div class="chart-bar-value">₩2.45M</div>
+                    </div>
+                    <div class="chart-bar-label">12월</div>
+                </div>
+            </div>
+
+            <div class="revenue-summary">
+                <div class="revenue-item">
+                    <div class="revenue-label">이번 달 수익</div>
+                    <div>
+                        <span class="revenue-value">₩2,450,000</span>
+                    </div>
+                </div>
+                <div class="revenue-item">
+                    <div class="revenue-label">정산 가능 금액</div>
+                    <div>
+                        <span class="revenue-value">₩8,500,000</span>
+                    </div>
+                </div>
+                <div class="revenue-item">
+                    <div class="revenue-label">총 누적 수익</div>
+                    <div>
+                        <span class="revenue-value">₩24,350,000</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab navigation
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Chart bar hover effect
+        document.querySelectorAll('.chart-bar').forEach(bar => {
+            bar.addEventListener('mouseenter', function() {
+                this.style.opacity = '0.8';
+            });
+            bar.addEventListener('mouseleave', function() {
+                this.style.opacity = '1';
+            });
+        });
+
+        // Notification badge click
+        document.querySelector('.notification-btn').addEventListener('click', function() {
+            alert('알림 센터로 이동합니다.');
+        });
+    </script>
+</body>
+</html>

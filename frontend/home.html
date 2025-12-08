@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WEBTOON PLUS - 웹툰/웹소설 플랫폼</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(#fafafa);
+            min-height: 100vh;
+            color:#0D0D0D;
+        }
+
+        h1 {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        h2 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        h3 {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        h4 {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        p {
+            font-size: 13px;
+        }
+
+        /* Header */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background:#1FAFBF;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 12px 16px;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .icon {
+            width: 24px;
+            height: 24px;
+            color: white;
+            cursor: pointer;
+        }
+
+        /* Banner Carousel */
+        .banner-carousel {
+            position: relative;
+            width: 100%;
+            height: 256px;
+            overflow: hidden;
+        }
+
+        .banner-slide {
+            position: absolute;
+            inset: 0;
+            transition: opacity 0.5s;
+            opacity: 0;
+        }
+
+        .banner-slide.active {
+            opacity: 1;
+        }
+
+        .banner-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.6;
+        }
+
+        .banner-content {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 24px;
+            background: linear-gradient(to top,transparent);
+        }
+
+        .banner-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0,0,0,0.3);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            padding: 8px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .banner-nav:hover {
+            background: rgba(0,0,0,0.5);
+        }
+
+        .banner-nav.prev {
+            left: 8px;
+        }
+
+        .banner-nav.next {
+            right: 8px;
+        }
+
+        .banner-indicators {
+            position: absolute;
+            bottom: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+        }
+
+        .indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 9999px;
+            background: rgba(255,255,255,0.5);
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .indicator.active {
+            width: 24px;
+            background: white;
+        }
+
+        /* Section */
+        .section {
+            padding: 24px 16px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .more-btn {
+            color: #05F2DB;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        /* Recommended Section */
+        .recommended-scroll {
+            display: flex;
+            gap: 16px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            scrollbar-width: none;
+        }
+
+        .recommended-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        .recommended-card {
+            flex-shrink: 0;
+            width: 288px;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(98,217,205,0.3);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .recommended-card:hover {
+            border-color: #05F2DB;
+            transform: scale(1.05);
+        }
+
+        .card-image {
+            position: relative;
+            height: 160px;
+        }
+
+        .card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .badge {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: #05F2DB;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .card-content {
+            padding: 16px;
+        }
+
+        .card-author {
+            color: #6CCED9;
+            margin: 4px 0 12px;
+        }
+
+        .card-stats {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 13px;
+        }
+
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .stat.rating {
+            color: #05F2DB;
+        }
+
+        .stat.views {
+            color: rgba(255,255,255,0.7);
+        }
+
+        /* Genre Section */
+        .genre-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            scrollbar-width: none;
+        }
+
+        .genre-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .genre-tab {
+            padding: 8px 16px;
+            border-radius: 9999px;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: none;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .genre-tab:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .genre-tab.active {
+            background: #05F2DB;
+            color: white;
+        }
+
+        .genre-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .genre-item {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .genre-item:hover {
+            transform: scale(1.05);
+        }
+
+        .genre-item-image {
+            aspect-ratio: 3/4;
+            position: relative;
+        }
+
+        .genre-item-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .new-badge {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            background: #1FAFBF;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+        }
+
+        .genre-item-content {
+            padding: 8px;
+        }
+
+        .genre-item-content h4 {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .genre-item-content p {
+            color: #6CCED9;
+        }
+
+        /* Ranking Section */
+        .ranking-container {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(98,217,205,0.2);
+        }
+
+        .ranking-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .ranking-item:last-child {
+            border-bottom: none;
+        }
+
+        .ranking-item:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .rank-number {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .rank-1 {
+            background: #05F2DB;
+            color: #026873;
+        }
+
+        .rank-2 {
+            background:  #62D9CD;
+            color: #026873;
+        }
+
+        .rank-3 {
+            background:#6CCED9;
+            color: #026873;
+        }
+
+        .rank-other {
+            background: rgba(2,104,115,0.4);
+            color: #026873;
+        }
+
+        .rank-thumbnail {
+            width: 48px;
+            height: 64px;
+            border-radius: 8px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .rank-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .rank-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .rank-info h4 {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .rank-info p {
+            color: #6CCED9;
+        }
+
+        .rank-change {
+            flex-shrink: 0;
+        }
+
+        .trend-up {
+            color: #05F2DB;
+        }
+
+        .trend-down {
+            color: #ff6b6b;
+            transform: rotate(180deg);
+        }
+
+        .trend-same {
+            width: 16px;
+            height: 2px;
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* Event Section */
+        .event-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .event-card {
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(98,217,205,0.3);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .event-card:hover {
+            border-color: #05F2DB;
+            transform: scale(1.02);
+        }
+
+        .event-content {
+            display: flex;
+            align-items: start;
+            gap: 16px;
+        }
+
+        .event-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .event-text {
+            flex: 1;
+        }
+
+        .event-text p {
+            color: #6CCED9;
+            margin-top: 4px;
+        }
+
+        .event-btn {
+            padding: 8px 16px;
+            border-radius: 9999px;
+            border: none;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .scrollbar-hide {
+            scrollbar-width: none;
+        }
+
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="header-left">
+                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+                <h1>WEBTOON PLUS</h1>
+            </div>
+            <div class="header-right">
+                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="m21 21-4.35-4.35"></path>
+                </svg>
+                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path>
+                    <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path>
+                </svg>
+            </div>
+        </div>
+    </header>
+
+    <!-- Banner Carousel -->
+    <div class="banner-carousel" id="bannerCarousel">
+        <div class="banner-slide active" style="background-color: #1FAFBF;">
+            <img src="https://images.unsplash.com/photo-1670073952001-1aafed4bfc02?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmYW50YXN5JTIwYXJ0JTIwZGlnaXRhbHxlbnwxfHx8fDE3NjQ4MTk4NDJ8MA&ixlib=rb-4.1.0&q=80&w=1080" class="banner-image" alt="판타지 대작">
+            <div class="banner-content">
+                <h2>신규 연재 시작!</h2>
+                <p>판타지 대작 '마법사의 귀환'</p>
+            </div>
+        </div>
+        <div class="banner-slide" style="background-color: #6CCED9;">
+            <img src="https://images.unsplash.com/photo-1761285367125-61a6470266ad?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxyb21hbnRpYyUyMGlsbHVzdHJhdGlvbiUyMGFydHxlbnwxfHx8fDE3NjQ4MTk4NDJ8MA&ixlib=rb-4.1.0&q=80&w=1080" class="banner-image" alt="로맨스 웹소설">
+            <div class="banner-content">
+                <h2>독점 연재 중</h2>
+                <p>로맨스 웹소설 '달빛 아래서'</p>
+            </div>
+        </div>
+        <div class="banner-slide" style="background-color: #05F2DB;">
+            <img src="https://images.unsplash.com/photo-1720031995215-3b13aa6c42a7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhY3Rpb24lMjBoZXJvJTIwaWxsdXN0cmF0aW9ufGVufDF8fHx8MTc2NDgxOTg0M3ww&ixlib=rb-4.1.0&q=80&w=1080" class="banner-image" alt="액션 웹툰">
+            <div class="banner-content">
+                <h2>시즌2 오픈!</h2>
+                <p>액션 웹툰 '최강의 검'</p>
+            </div>
+        </div>
+
+        <button class="banner-nav prev" onclick="changeBanner(-1)">
+            <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 18l-6-6 6-6"></path>
+            </svg>
+        </button>
+        <button class="banner-nav next" onclick="changeBanner(1)">
+            <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 18l6-6-6-6"></path>
+            </svg>
+        </button>
+
+        <div class="banner-indicators">
+            <button class="indicator active" onclick="goToBanner(0)"></button>
+            <button class="indicator" onclick="goToBanner(1)"></button>
+            <button class="indicator" onclick="goToBanner(2)"></button>
+        </div>
+    </div>
+
+    <!-- Recommended Section -->
+    <section class="section">
+        <div class="section-header">
+            <h2>오늘의 추천</h2>
+            <button class="more-btn">더보기 ></button>
+        </div>
+        <div class="recommended-scroll">
+            <div class="recommended-card">
+                <div class="card-image">
+                    <img src="https://images.unsplash.com/photo-1670073952001-1aafed4bfc02?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmYW50YXN5JTIwYXJ0JTIwZGlnaXRhbHxlbnwxfHx8fDE3NjQ4MTk4NDJ8MA&ixlib=rb-4.1.0&q=80&w=1080" alt="회귀한 천재 마법사">
+                    <span class="badge">NEW</span>
+                </div>
+                <div class="card-content">
+                    <h3>회귀한 천재 마법사</h3>
+                    <p class="card-author">김작가 · 판타지</p>
+                    <div class="card-stats">
+                        <div class="stat rating">
+                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                            </svg>
+                            <span>9.8</span>
+                        </div>
+                        <div class="stat views">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                            <span>1.2M</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="recommended-card">
+                <div class="card-image">
+                    <img src="https://images.unsplash.com/photo-1761285367125-61a6470266ad?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxyb21hbnRpYyUyMGlsbHVzdHJhdGlvbiUyMGFydHxlbnwxfHx8fDE3NjQ4MTk4NDJ8MA&ixlib=rb-4.1.0&q=80&w=1080" alt="운명의 붉은 실">
+                    <span class="badge">HOT</span>
+                </div>
+                <div class="card-content">
+                    <h3>운명의 붉은 실</h3>
+                    <p class="card-author">박작가 · 로맨스</p>
+                    <div class="card-stats">
+                        <div class="stat rating">
+                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                            </svg>
+                            <span>9.5</span>
+                        </div>
+                        <div class="stat views">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                            <span>980K</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="recommended-card">
+                <div class="card-image">
+                    <img src="https://images.unsplash.com/photo-1720031995215-3b13aa6c42a7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhY3Rpb24lMjBoZXJvJTIwaWxsdXN0cmF0aW9ufGVufDF8fHx8MTc2NDgxOTg0M3ww&ixlib=rb-4.1.0&q=80&w=1080" alt="레벨업의 신">
+                    <span class="badge">인기</span>
+                </div>
+                <div class="card-content">
+                    <h3>레벨업의 신</h3>
+                    <p class="card-author">이작가 · 액션</p>
+                    <div class="card-stats">
+                        <div class="stat rating">
+                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                            </svg>
+                            <span>9.7</span>
+                        </div>
+                        <div class="stat views">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                            <span>1.5M</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Genre Section -->
+    <section class="section">
+        <h2>장르별 신작</h2>
+        <div class="genre-tabs" id="genreTabs">
+            <button class="genre-tab active" onclick="filterGenre('전체')">전체</button>
+            <button class="genre-tab" onclick="filterGenre('판타지')">판타지</button>
+            <button class="genre-tab" onclick="filterGenre('로맨스')">로맨스</button>
+            <button class="genre-tab" onclick="filterGenre('액션')">액션</button>
+            <button class="genre-tab" onclick="filterGenre('스릴러')">스릴러</button>
+            <button class="genre-tab" onclick="filterGenre('일상')">일상</button>
+        </div>
+        <div class="genre-grid" id="genreGrid">
+            <div class="genre-item" data-genre="판타지">
+                <div class="genre-item-image">
+                    <img src="https://images.unsplash.com/photo-1670073952001-1aafed4bfc02?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmYW50YXN5JTIwYXJ0JTIwZGlnaXRhbHxlbnwxfHx8fDE3NjQ4MTk4NDJ8MA&ixlib=rb-4.1.0&q=80&w=1080" alt="마법의 세계">
+                    <span class="new-badge">NEW</span>
+                </div>
+                <div class="genre-item-content">
+                    <h4>마법의 세계</h4>
+                    <p>EP. 45</p>
+                </div>
+            </div>
+
+            <div class="genre-item" data-genre="로맨스">
+                <div class="genre-item-image">
+                    <img src="https://images.unsplash.com/photo-1761285367125-61a6470266ad?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxyb21hbnRpYyUyMGlsbHVzdHJhdGlvbiUyMGFydHxlbnwxfHx8fDE3NjQ4MTk4NDJ8MA&ixlib=rb-4.1.0&q=80&w=1080" alt="사랑의 온도">
+                    <span class="new-badge">NEW</span>
+                </div>
+                <div class="genre-item-content">
+                    <h4>사랑의 온도</h4>
+                    <p>EP. 32</p>
+                </div>
+            </div>
+
+            <div class="genre-item" data-genre="액션">
+                <div class="genre-item-image">
+                    <img src="https://images.unsplash.com/photo-1720031995215-3b13aa6c42a7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhY3Rpb24lMjBoZXJvJTIwaWxsdXN0cmF0aW9ufGVufDF8fHx8MTc2NDgxOTg0M3ww&ixlib=rb-4.1.0&q=80&w=1080" alt="최강의 검사">
+                </div>
+                <div class="genre-item-content">
+                    <h4>최강의 검사</h4>
+                    <p>EP. 78</p>
+                </div>
+            </div>
+
+            <div class="genre-item" data-genre="스릴러">
+                <div class="genre-item-image">
+                    <img src="https://images.unsplash.com/photo-1698956483970-a47edef29331?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxteXN0ZXJ5JTIwdGhyaWxsZXIlMjBib29rfGVufDF8fHx8MTc2NDY5NjkzN3ww&ixlib=rb-4.1.0&q=80&w=1080" alt="미스터리 탐정">
+                    <span class="new-badge">NEW</span>
+                </div>
+                <div class="genre-item-content">
+                    <h4>미스터리 탐정</h4>
+                    <p>EP. 21</p>
+                </div>
+            </div>
+
+            <div class="genre-item" data-genre="판타지">
+                <div class="genre-item-image">
+                    <img src="https://images.unsplash.com/photo-1653723367970-ae966c1b803e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhbmltZSUyMHN0eWxlJTIwaWxsdXN0cmF0aW9ufGVufDF8fHx8MTc2NDc1MzgyM3ww&ixlib=rb-4.1.0&q=80&w=1080" alt="환생한 용사">
+                </div>
+                <div class="genre-item-content">
+                    <h4>환생한 용사</h4>
+                    <p>EP. 56</p>
+                </div>
+            </div>
+
+            <div class="genre-item" data-genre="로맨스">
+                <div class="genre-item-image">
+                    <img src="https://images.unsplash.com/photo-1759863738666-7584248cdf7e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb21pYyUyMGJvb2slMjBpbGx1c3RyYXRpb258ZW58MXx8fHwxNzY0ODE5ODQxfDA&ixlib=rb-4.1.0&q=80&w=1080" alt="운명의 만남">
+                    <span class="new-badge">NEW</span>
+                </div>
+                <div class="genre-item-content">
+                    <h4>운명의 만남</h4>
+                    <p>EP. 12</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Ranking Section -->
+    <section class="section">
+        <div class="section-header">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <svg width="24" height="24" fill="none" stroke="#05F2DB" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 12a6 6 0 1 1 12 0"></path>
+                </svg>
+                <h2 style="margin: 0;">실시간 인기 순위</h2>
+            </div>
+        </div>
+        <div class="ranking-container">
+            <div class="ranking-item">
+                <div class="rank-number rank-1">1</div>
+                <div class="rank-thumbnail">
+                    <img src="https://images.unsplash.com/photo-1670073952001-1aafed4bfc02?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmYW50YXN5JTIwYXJ0JTIwZGlnaXRhbHxlbnwxfHx8fDE3NjQ4MTk4NDJ8MA&ixlib=rb-4.1.0&q=80&w=1080" alt="회귀한 천재 마법사">
+                </div>
+                <div class="rank-info">
+                    <h4>회귀한 천재 마법사</h4>
+                    <p>김작가 · 판타지</p>
+                </div>
+                <div class="rank-change">
+                    <svg class="trend-up" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m3 17 6-6 4 4 8-8"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 7h7v7"></path>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="ranking-item">
+                <div class="rank-number rank-2">2</div>
+                <div class="rank-thumbnail">
+                    <img src="https://images.unsplash.com/photo-1720031995215-3b13aa6c42a7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhY3Rpb24lMjBoZXJvJTIwaWxsdXN0cmF0aW9ufGVufDF8fHx8MTc2NDgxOTg0M3ww&ixlib=rb-4.1.0&q=80&w=1080" alt="레벨업의 신">
+                </div>
+                <div class="rank-info">
+                    <h4>레벨업의 신</h4>
+                    <p>이작가 · 액션</p>
+                </div>
+                <div class="rank-change">
+                    <div class="trend-same"></div>
+                </div>
+            </div>
+
+            <div class="ranking-item">
+                <div class="rank-number rank-3">3</div>
+                <div class="rank-thumbnail">
+                    <img src="https://images.unsplash.com/photo-1761285367125-61a6470266ad?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxyb21hbnRpYyUyMGlsbHVzdHJhdGlvbiUyMGFydHxlbnwxfHx8fDE3NjQ4MTk4NDJ8MA&ixlib=rb-4.1.0&q=80&w=1080" alt="운명의 붉은 실">
+                </div>
+                <div class="rank-info">
+                    <h4>운명의 붉은 실</h4>
+                    <p>박작가 · 로맨스</p>
+                </div>
+                <div class="rank-change">
+                    <svg class="trend-up" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m3 17 6-6 4 4 8-8"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 7h7v7"></path>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="ranking-item">
+                <div class="rank-number rank-other">4</div>
+                <div class="rank-thumbnail">
+                    <img src="https://images.unsplash.com/photo-1698956483970-a47edef29331?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxteXN0ZXJ5JTIwdGhyaWxsZXIlMjBib29rfGVufDF8fHx8MTc2NDY5NjkzN3ww&ixlib=rb-4.1.0&q=80&w=1080" alt="미스터리 탐정">
+                </div>
+                <div class="rank-info">
+                    <h4>미스터리 탐정</h4>
+                    <p>최작가 · 스릴러</p>
+                </div>
+                <div class="rank-change">
+                    <svg class="trend-down" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m3 17 6-6 4 4 8-8"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 7h7v7"></path>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="ranking-item">
+                <div class="rank-number rank-other">5</div>
+                <div class="rank-thumbnail">
+                    <img src="https://images.unsplash.com/photo-1653723367970-ae966c1b803e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhbmltZSUyMHN0eWxlJTIwaWxsdXN0cmF0aW9ufGVufDF8fHx8MTc2NDc1MzgyM3ww&ixlib=rb-4.1.0&q=80&w=1080" alt="환생한 용사">
+                </div>
+                <div class="rank-info">
+                    <h4>환생한 용사</h4>
+                    <p>정작가 · 판타지</p>
+                </div>
+                <div class="rank-change">
+                    <svg class="trend-up" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m3 17 6-6 4 4 8-8"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 7h7v7"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Event Section -->
+    <section class="section" style="padding-bottom: 32px;">
+        <h2>진행 중인 이벤트</h2>
+        <div class="event-list">
+            <div class="event-card" style="background: linear-gradient(135deg, rgba(31,175,191,0.25) 0%, rgba(31,175,191,0.06) 100%);">
+                <div class="event-content">
+                    <div class="event-icon" style="background-color: #05F2DB;">
+                        <svg width="24" height="24" fill="none" stroke="#026873" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12v8H4v-8"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 11 3 3 8-8"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12V6H4v6"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2 5h20v2a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5z"></path>
+                        </svg>
+                    </div>
+                    <div class="event-text">
+                        <h3>신규 가입 이벤트</h3>
+                        <p>지금 가입하고 무료 코인 100개 받기!</p>
+                    </div>
+                    <button class="event-btn" style="background-color: #05F2DB; color: #026873;">참여</button>
+                </div>
+            </div>
+
+            <div class="event-card" style="background: linear-gradient(135deg, rgba(27,129,140,0.25) 0%, rgba(27,129,140,0.06) 100%);">
+                <div class="event-content">
+                    <div class="event-icon" style="background-color: #6CCED9;">
+                        <svg width="24" height="24" fill="none" stroke="#026873" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v4"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5v4"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2"></path>
+                        </svg>
+                    </div>
+                    <div class="event-text">
+                        <h3>매일 출석 체크</h3>
+                        <p>출석만 해도 무료 이용권 증정</p>
+                    </div>
+                    <button class="event-btn" style="background-color: #6CCED9; color: #026873;">참여</button>
+                </div>
+            </div>
+
+            <div class="event-card" style="background: linear-gradient(135deg, rgba(2,104,115,0.25) 0%, rgba(2,104,115,0.06) 100%);">
+                <div class="event-content">
+                    <div class="event-icon" style="background-color: #05F2DB;">
+                        <svg width="24" height="24" fill="none" stroke="#026873" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                        </svg>
+                    </div>
+                    <div class="event-text">
+                        <h3>작품 리뷰 이벤트</h3>
+                        <p>리뷰 작성하고 추첨으로 선물 받기</p>
+                    </div>
+                    <button class="event-btn" style="background-color: #05F2DB; color: #026873;">참여</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Banner Carousel
+        let currentBannerIndex = 0;
+        const bannerSlides = document.querySelectorAll('.banner-slide');
+        const indicators = document.querySelectorAll('.indicator');
+
+        function showBanner(index) {
+            bannerSlides.forEach(slide => slide.classList.remove('active'));
+            indicators.forEach(ind => ind.classList.remove('active'));
+            
+            bannerSlides[index].classList.add('active');
+            indicators[index].classList.add('active');
+        }
+
+        function changeBanner(direction) {
+            currentBannerIndex = (currentBannerIndex + direction + bannerSlides.length) % bannerSlides.length;
+            showBanner(currentBannerIndex);
+        }
+
+        function goToBanner(index) {
+            currentBannerIndex = index;
+            showBanner(currentBannerIndex);
+        }
+
+        // Auto-play banner
+        setInterval(() => {
+            changeBanner(1);
+        }, 4000);
+
+        // Genre Filter
+        function filterGenre(genre) {
+            const tabs = document.querySelectorAll('.genre-tab');
+            const items = document.querySelectorAll('.genre-item');
+
+            tabs.forEach(tab => {
+                if (tab.textContent === genre) {
+                    tab.classList.add('active');
+                } else {
+                    tab.classList.remove('active');
+                }
+            });
+
+            items.forEach(item => {
+                if (genre === '전체' || item.getAttribute('data-genre') === genre) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>
