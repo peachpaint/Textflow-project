@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.example.textflowproject.domain.Like.EpisodeLike;
 import org.example.textflowproject.domain.user.User;
 import org.example.textflowproject.domain.episode.Episode;
-import org.example.textflowproject.repository.EpisodeLikeRepository;
-import org.example.textflowproject.repository.UserRepository;
-import org.example.textflowproject.repository.EpisodeRepository;
+import org.example.textflowproject.domain.Like.EpisodeLikeRepository;
+import org.example.textflowproject.domain.user.UserRepository;
+import org.example.textflowproject.domain.episode.EpisodeRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

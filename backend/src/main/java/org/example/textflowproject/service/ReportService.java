@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.example.textflowproject.domain.Report.Report;
 import org.example.textflowproject.domain.Report.TargetType;
 import org.example.textflowproject.domain.user.User;
-import org.example.textflowproject.repository.ReportRepository;
-import org.example.textflowproject.repository.UserRepository;
+import org.example.textflowproject.domain.Report.ReportRepository;
+import org.example.textflowproject.domain.user.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
