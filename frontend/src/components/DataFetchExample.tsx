@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { api } from "../../api/client";
+import { api } from "../api/client";
 
 // API로 데이터를 가져오는 예시 컴포넌트
 export function DataFetchExample() {

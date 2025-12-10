@@ -9,7 +9,10 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "episodes")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Builder
 public class Episode {
   @Id 
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -64,6 +67,87 @@ public class Episode {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "work_id", nullable = false)
   private Work work;
+
+  // 비즈니스 메서드
+  
+  /**
+   * 조회수 증가
+   */
+  public void increaseViewCount() {
+    this.viewCount++;
+    this.updatedAt = LocalDateTime.now();
+  }
+
+  /**
+   * 좋아요 증가
+   */
+  public void increaseLikeCount() {
+    this.likeCount++;
+    this.updatedAt = LocalDateTime.now();
+  }
+
+  /**
+   * 좋아요 감소
+   */
+  public void decreaseLikeCount() {
+    if (this.likeCount > 0) {
+      this.likeCount--;
+      this.updatedAt = LocalDateTime.now();
+    }
+  }
+
+  /**
+   * 댓글 수 증가
+   */
+  public void increaseCommentCount() {
+    this.commentCount++;
+    this.updatedAt = LocalDateTime.now();
+  }
+
+  /**
+   * 댓글 수 감소
+   */
+  public void decreaseCommentCount() {
+    if (this.commentCount > 0) {
+      this.commentCount--;
+      this.updatedAt = LocalDateTime.now();
+    }
+  }
+
+  /**
+   * 에피소드 상태 변경
+   */
+  public void updateStatus(EpisodeStatus newStatus) {
+    if (newStatus == null) {
+      throw new IllegalArgumentException("에피소드 상태는 null일 수 없습니다.");
+    }
+    this.status = newStatus;
+    this.updatedAt = LocalDateTime.now();
+  }
+
+  /**
+   * 에피소드 내용 수정
+   */
+  public void updateContent(String title, String content) {
+    if (title != null && !title.isBlank()) {
+      this.title = title;
+    }
+    if (content != null) {
+      this.content = content;
+    }
+    this.updatedAt = LocalDateTime.now();
+  }
+
+  /**
+   * 가격 변경
+   */
+  public void updatePrice(BigDecimal newPrice) {
+    if (newPrice == null || newPrice.compareTo(BigDecimal.ZERO) < 0) {
+      throw new IllegalArgumentException("가격은 0 이상이어야 합니다.");
+    }
+    this.price = newPrice;
+    this.updatedAt = LocalDateTime.now();
+  }
 
   @PrePersist
   public void prePersist() {
