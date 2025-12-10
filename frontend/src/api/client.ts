@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { WorkDetailResponse } from "../types/work";
+import { WorkDetailDto, Work } from "../types/work";
 import { HomeResponse } from "../types/home";
 
 // Backend API URL
@@ -54,38 +54,38 @@ export const api = {
     apiClient.get<HomeResponse>("/home"),
 
   // 작품 관련 API
-  getRecommendedWorks: (): Promise<AxiosResponse<WorkDetailResponse[]>> =>
-    apiClient.get<WorkDetailResponse[]>("/api/works/recommended"),
+  getRecommendedWorks: (): Promise<AxiosResponse<Work[]>> =>
+    apiClient.get<Work[]>("/api/works/recommended"),
 
   getWorksByGenre: (
     genre: string,
     page: number = 0,
     size: number = 20
-  ): Promise<AxiosResponse<WorkDetailResponse[]>> =>
-    apiClient.get<WorkDetailResponse[]>(`/api/works/genre/${genre}`, {
+  ): Promise<AxiosResponse<Work[]>> =>
+    apiClient.get<Work[]>(`/api/works/genre/${genre}`, {
       params: { page, size },
     }),
 
-  getRankings: (): Promise<AxiosResponse<WorkDetailResponse[]>> =>
-    apiClient.get<WorkDetailResponse[]>("/api/works/rankings"),
+  getRankings: (): Promise<AxiosResponse<Work[]>> =>
+    apiClient.get<Work[]>("/api/works/rankings"),
 
   getNewWorks: (
     page: number = 0,
     size: number = 20
-  ): Promise<AxiosResponse<WorkDetailResponse[]>> =>
-    apiClient.get<WorkDetailResponse[]>("/api/works/new", {
+  ): Promise<AxiosResponse<Work[]>> =>
+    apiClient.get<Work[]>("/api/works/new", {
       params: { page, size },
     }),
 
-  getWorkDetail: (id: number): Promise<AxiosResponse<WorkDetailResponse>> =>
-    apiClient.get<WorkDetailResponse>(`/api/works/${id}`),
+  getWorkDetail: (id: number): Promise<AxiosResponse<WorkDetailDto>> =>
+    apiClient.get<WorkDetailDto>(`/works/${id}`),
 
   searchWorks: (
     keyword: string,
     page: number = 0,
     size: number = 20
-  ): Promise<AxiosResponse<WorkDetailResponse[]>> =>
-    apiClient.get<WorkDetailResponse[]>("/api/works/search", {
+  ): Promise<AxiosResponse<Work[]>> =>
+    apiClient.get<Work[]>("/api/works/search", {
       params: { keyword, page, size },
     }),
 

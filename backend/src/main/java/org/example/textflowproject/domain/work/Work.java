@@ -140,4 +140,14 @@ public class Work {
   public void preUpdate() {
     updatedAt = LocalDateTime.now();
   }
+
+  //slug
+  public void updateSlug(String slug) {
+    this.slug = slug;
+  }
+  // Work.java
+  public Genre getGenre() {
+    return this.category;
+  }
+
 }

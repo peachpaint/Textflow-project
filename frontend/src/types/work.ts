@@ -33,6 +33,28 @@ export interface Episode {
   isNew?: boolean;
 }
 
+// 백엔드 WorkDetailDto 응답 타입
+export interface WorkDetailDto {
+  workId: number;
+  title: string;
+  slug?: string;
+  description?: string;
+  thumbnailUrl?: string;
+  category?: string;
+  authorName?: string;
+  viewCount?: number;
+  publicationStatus?: string;
+  isAdult?: boolean;
+  episodes?: EpisodeSimpleDto[];
+}
+
+export interface EpisodeSimpleDto {
+  episodeId: number;
+  episodeNo: number;
+  title: string;
+  createdAt?: string;
+}
+
 export interface WorkDetailResponse {
   work: Work;
   episodes: Episode[];

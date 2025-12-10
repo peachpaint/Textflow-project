@@ -9,6 +9,7 @@ import WorkSynopsis from "../components/detail/WorkSynopsis";
 import EpisodeList from "../components/detail/EpisodeList";
 import FixedBottomBar from "../components/common/FixedBottomBar";
 import { Work, Episode } from "../types/work";
+import { api } from "../api/client";
 
 export default function WorkDetail() {
   const { workId } = useParams<{ workId: string }>();
@@ -22,61 +23,66 @@ export default function WorkDetail() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // TODO: API 연결 후 실제 데이터 가져오기
-    // 현재는 Mock 데이터 사용
-    fetchWorkDetail();
+    if (workId) {
+      fetchWorkDetail();
+    }
   }, [workId]);
 
   const fetchWorkDetail = async () => {
+    if (!workId) return;
+
     try {
       setLoading(true);
       setError(null);
 
-      // Mock 데이터 (나중에 API 호출로 대체)
-      const mockWork: Work = {
-        workId: Number(workId) || 1,
-        title: "전지적 독자 시점",
-        thumbnail: "https://via.placeholder.com/300x400",
-        rating: 9.8,
-        views: 1250000,
-        genre: "판타지",
-        authorName: "singNsong",
-        synopsis: `'이것은 내가 가장 좋아하는 웹소설의 마지막 장면이었다.'
+      // API로 작품 상세 정보 가져오기
+      const workResponse = await api.getWorkDetail(Number(workId));
+      const workData = workResponse.data;
 
-대중교통 기사 김독자는 10년 간 연재한 웹소설 '멸망한 세계에서 살아남는 세 가지 방법'의 유일한 독자였다.
+      // 백엔드 DTO를 프론트엔드 Work 타입으로 변환
+      if (workData) {
+        const convertedWork: Work = {
+          workId: workData.workId || Number(workId),
+          title: workData.title || "",
+          thumbnail:
+            workData.thumbnailUrl || "https://via.placeholder.com/300x400",
+          rating: 0, // TODO: 평점 API 추가 필요
+          views: Number(workData.viewCount) || 0,
+          genre: workData.category || "기타",
+          authorName: workData.authorName || "작가 미상",
+          synopsis: workData.description || "",
+          serialStatus:
+            workData.publicationStatus === "ONGOING"
+              ? "ONGOING"
+              : workData.publicationStatus === "COMPLETED"
+              ? "COMPLETED"
+              : "HIATUS",
+          ageRating: workData.isAdult ? "ADULT" : "ALL",
+          totalEpisodes: workData.episodes?.length || 0,
+        };
+        setWork(convertedWork);
 
-그런데 어느 날 그 소설이 현실이 되었다. 
-소설 속 세계관 그대로 멸망이 시작되고, 괴물들이 나타나기 시작했다.
-
-하지만 김독자는 이 세계를 잘 알고 있다. 
-소설을 끝까지 읽은 유일한 독자이기 때문이다.
-
-이제 그는 소설 속 지식을 바탕으로 이 멸망한 세계에서 살아남아야 한다.`,
-        serialStatus: "ONGOING",
-        ageRating: "TEEN",
-        tags: ["판타지", "액션", "회귀", "성장", "먼치킨"],
-        likeCount: 45230,
-        bookmarkCount: 32100,
-        totalEpisodes: 127,
-        lastUpdated: "2024.01.15",
-      };
-
-      const mockEpisodes: Episode[] = Array.from({ length: 10 }, (_, i) => ({
-        episodeId: i + 1,
-        workId: Number(workId) || 1,
-        episodeNumber: 127 - i,
-        title: `${127 - i}화 제목`,
-        thumbnail: `https://via.placeholder.com/160x120`,
-        uploadDate: `2024.01.${15 - i}`,
-        viewCount: Math.floor(Math.random() * 50000) + 10000,
-        likeCount: Math.floor(Math.random() * 5000) + 500,
-        isFree: i < 3,
-        price: i >= 3 ? 300 : undefined,
-        isNew: i === 0,
-      }));
-
-      setWork(mockWork);
-      setEpisodes(mockEpisodes);
+        // 회차 목록 변환
+        if (workData.episodes && workData.episodes.length > 0) {
+          const convertedEpisodes: Episode[] = workData.episodes.map(
+            (ep: any, index: number) => ({
+              episodeId: ep.episodeId,
+              workId: Number(workId),
+              episodeNumber: ep.episodeNo,
+              title: ep.title,
+              thumbnail:
+                workData.thumbnailUrl || "https://via.placeholder.com/160x120",
+              uploadDate: ep.createdAt?.split("T")[0] || "",
+              viewCount: 0, // TODO: 회차별 조회수 API 추가 필요
+              likeCount: 0, // TODO: 회차별 좋아요 API 추가 필요
+              isFree: index < 3, // 첫 3화 무료 (임시)
+              price: index >= 3 ? 300 : undefined,
+              isNew: index === 0,
+            })
+          );
+          setEpisodes(convertedEpisodes);
+        }
+      }
     } catch (error) {
       console.error("작품 정보 로딩 실패:", error);
       setError("작품 정보를 불러오는데 실패했습니다.");
@@ -85,36 +91,70 @@ export default function WorkDetail() {
     }
   };
 
-  const handleLike = () => {
-    setIsLiked(!isLiked);
-    // TODO: API 호출로 좋아요 상태 저장
+  const handleLike = async () => {
+    if (!work) return;
+
+    try {
+      if (!isLiked) {
+        await api.addLike(work.workId);
+      } else {
+        await api.removeLike(work.workId);
+      }
+      setIsLiked(!isLiked);
+    } catch (error) {
+      console.error("좋아요 처리 실패:", error);
+    }
   };
 
-  const handleBookmark = () => {
-    setIsBookmarked(!isBookmarked);
-    // TODO: API 호출로 알림 상태 저장
+  const handleBookmark = async () => {
+    if (!work) return;
+
+    try {
+      if (!isBookmarked) {
+        await api.addBookmark(work.workId);
+      } else {
+        await api.removeBookmark(work.workId);
+      }
+      setIsBookmarked(!isBookmarked);
+    } catch (error) {
+      console.error("알림 설정 실패:", error);
+    }
   };
 
   const handleShare = () => {
-    // TODO: 공유 기능 구현
-    alert("공유 기능 (준비중)");
+    if (!work) return;
+
+    // Web Share API 사용
+    if (navigator.share) {
+      navigator
+        .share({
+          title: work.title,
+          text: `${work.authorName}의 ${work.title}을 확인해보세요!`,
+          url: window.location.href,
+        })
+        .catch((error) => console.error("공유 실패:", error));
+    } else {
+      // 클립보드에 URL 복사
+      navigator.clipboard.writeText(window.location.href);
+      alert("링크가 복사되었습니다.");
+    }
   };
 
   const handleEpisodeClick = (episodeId: number) => {
-    // TODO: 뷰어 페이지로 이동
     navigate(`/viewer/${workId}/${episodeId}`);
   };
 
   const handleFirstEpisode = () => {
     if (episodes.length > 0) {
+      // 첫 번째 회차 (가장 오래된 회차)
       const firstEpisode = episodes[episodes.length - 1];
       handleEpisodeClick(firstEpisode.episodeId);
     }
   };
 
   const handleContinueReading = () => {
-    // TODO: 마지막으로 읽은 회차로 이동
     if (episodes.length > 0) {
+      // TODO: 실제로는 사용자의 마지막 읽은 회차를 가져와야 함
       handleEpisodeClick(episodes[0].episodeId);
     }
   };
